@@ -6,6 +6,8 @@ import lombok.*;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 @Table(name = "users")
 @Getter
@@ -33,6 +35,7 @@ public class User {
     @Column(unique = true, nullable = false)
     private String username;
 
+    @JsonManagedReference
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "user_roles",

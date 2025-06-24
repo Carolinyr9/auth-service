@@ -7,6 +7,8 @@ import lombok.*;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 @Table(name = "roles")
 @Getter
@@ -23,6 +25,7 @@ public class Role {
     @Column(nullable = false, unique = true, length = 20, name = "role_name")
     private RoleName roleName;
 
+    @JsonBackReference
     @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
     private Set<User> users = new HashSet<>();
 
