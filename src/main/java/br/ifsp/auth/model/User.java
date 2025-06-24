@@ -35,7 +35,6 @@ public class User {
     @Column(unique = true, nullable = false)
     private String username;
 
-    @JsonManagedReference
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "user_roles",

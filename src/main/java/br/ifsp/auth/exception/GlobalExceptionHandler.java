@@ -140,7 +140,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleGenericException(Exception exception) {
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                "Erro interno no servidor. Entre em contato com o suporte.",
+                "An unexpected error occurred: " + exception.getMessage(),
                 LocalDateTime.now()
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
