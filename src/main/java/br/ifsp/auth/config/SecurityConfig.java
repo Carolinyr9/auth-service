@@ -1,6 +1,6 @@
 package br.ifsp.auth.config;
 
-import com.seunome.authservice.security.CustomJwtAuthenticationConverter;
+import br.ifsp.auth.security.CustomJwtAuthenticationConverter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
