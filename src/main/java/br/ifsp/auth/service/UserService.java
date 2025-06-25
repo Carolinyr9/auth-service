@@ -45,17 +45,16 @@ public class UserService {
 
     @Transactional
     public UserResponseDTO createUser(UserRequestDTO userRequestDTO) {
-        Set<RoleRequestDTO> roles = new HashSet<>();
-        roles.add(new RoleRequestDTO("ROLE_USER"));
-        
-        UserRequestWithRolesDTO userRequestWithRolesDTO = new UserRequestWithRolesDTO();
-        userRequestWithRolesDTO.setName(userRequestDTO.getName());
-        userRequestWithRolesDTO.setUsername(userRequestDTO.getUsername());
-        userRequestWithRolesDTO.setEmail(userRequestDTO.getEmail());
-        userRequestWithRolesDTO.setPassword(userRequestDTO.getPassword());
-        userRequestWithRolesDTO.setRoles(roles);
+        User user = modelMapper.map(userRequestDTO, User.class);
+        user.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
 
-        return createUser(userRequestWithRolesDTO);
+        Role defaultRole = roleRepository.findByRoleName(RoleName.ROLE_USER)
+                .orElseThrow(() -> new ResourceNotFoundException("Default role ROLE_USER not found."));
+        user.setRoles(new HashSet<>());
+        user.addRole(defaultRole);
+
+        User savedUser = userRepository.save(user);
+        return modelMapper.map(savedUser, UserResponseDTO.class);
     }
 
     @Transactional
