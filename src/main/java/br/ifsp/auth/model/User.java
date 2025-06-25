@@ -50,4 +50,8 @@ public class User {
     public void removeRole(Role role) {
         this.roles.remove(role);
     }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
 }
