@@ -32,16 +32,17 @@ public class SecurityConfig {
     private RSAPrivateKey priv;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, CustomJwtAuthenticationConverter jwtAuthConverter) throws Exception {
         http.csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**", "/api/login").permitAll()  // Permitir acesso sem autenticação ao registro
-                .anyRequest().authenticated()  // Requer autenticação para outras rotas
+                .requestMatchers("/api/auth/**", "/api/registrer").permitAll()
+                .anyRequest().authenticated()
             )
-            .oauth2ResourceServer(conf -> conf.jwt(jwt -> jwt.jwtAuthenticationConverter(new CustomJwtAuthenticationConverter())))
+            .oauth2ResourceServer(conf -> conf.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthConverter)))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         return http.build();
     }
+
 
     @Bean
     public JwtDecoder jwtDecoder() {

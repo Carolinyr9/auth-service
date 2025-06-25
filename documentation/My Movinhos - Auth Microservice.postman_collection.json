@@ -1,0 +1,346 @@
+{
+	"info": {
+		"_postman_id": "8fc6d67f-fa0f-422f-9cce-89567a533c18",
+		"name": "My Movinhos - Auth Microservice",
+		"description": "Collection de APIs para o microsserviço de Autenticação do Catálogo de Filmes, com base nos controllers RegistrerController, AuthController e UserManagementController.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "39752751"
+	},
+	"item": [
+		{
+			"name": "Register",
+			"item": [
+				{
+					"name": "Register New User (Public)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Test User {{$randomInt}}\",\n  \"email\": \"testuser{{$randomInt}}@example.com\",\n  \"username\": \"testuser{{$randomInt}}\",\n  \"password\": \"UserPass123!\"\n}"
+						},
+						"url": "{{baseUrl}}/registrer",
+						"description": "Permite que qualquer visitante se registre. O usuário receberá o papel 'ROLE_USER' por padrão."
+					},
+					"response": []
+				}
+			],
+			"description": "APIs para registro de novos usuários."
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Authenticate and Get JWT Token",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"jwtToken\", jsonData.token); // Supondo que a resposta seja { \"token\": \"seu_token\" }",
+									"console.log('JWT Token received and set:', pm.environment.get(\"jwtToken\"));"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"admin\",\n  \"password\": \"AdminPassword123!\"\n}"
+						},
+						"url": "{{baseUrl}}/auth",
+						"description": "Autentica um usuário com username e password e retorna um token JWT. Guarde o token na variável de ambiente `jwtToken` para requisições futuras."
+					},
+					"response": []
+				}
+			],
+			"description": "APIs para autenticação de usuários."
+		},
+		{
+			"name": "User Management (Admin)",
+			"item": [
+				{
+					"name": "List All Users",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users?page=0&size=10&sort=username,asc",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								},
+								{
+									"key": "sort",
+									"value": "username,asc",
+									"description": "Exemplo: username,desc; email,asc"
+								}
+							]
+						},
+						"description": "Retorna uma lista paginada de todos os usuários. Requer perfil de ADMIN."
+					},
+					"response": []
+				},
+				{
+					"name": "Get User by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData && jsonData.id) {",
+									"    pm.environment.set(\"currentUserId\", jsonData.id);",
+									"    console.log('User ID received and set:', pm.environment.get(\"currentUserId\"));",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtToken}}"
+							}
+						],
+						"url": "{{baseUrl}}/users/{{currentUserId}}",
+						"description": "Retorna um único usuário pelo seu ID. Requer perfil de ADMIN ou ser o próprio usuário."
+					},
+					"response": []
+				},
+				{
+					"name": "Get User by Username",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData && jsonData.id) {",
+									"    pm.environment.set(\"currentUserId\", jsonData.id);",
+									"    console.log('User ID received and set:', pm.environment.get(\"currentUserId\"));",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/users/search/by-username?username=admin",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"search",
+								"by-username"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "admin",
+									"description": "O username do usuário a ser buscado."
+								}
+							]
+						},
+						"description": "Retorna um único usuário pelo seu nome de usuário. Requer perfil de ADMIN ou ser o próprio usuário."
+					},
+					"response": []
+				},
+				{
+					"name": "Create User (Admin Only)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"newadminuser{{$randomInt}}\",\n    \"password\": \"AdminPass123!\",\n    \"name\": \"Admin User Test\",\n    \"email\": \"adminuser{{$randomInt}}@example.com\",\n    \"roles\": [\n        {\n            \"roleName\": \"ROLE_USER\"\n        },\n        {\n            \"roleName\": \"ROLE_ADMIN\"\n        }\n    ]\n}"
+						},
+						"url": "{{baseUrl}}/users",
+						"description": "Permite que um administrador crie um novo usuário, podendo especificar papéis. Requer perfil de ADMIN."
+					},
+					"response": []
+				},
+				{
+					"name": "Update User (Admin Only or Owner)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"updateduser{{$randomInt}}\",\n    \"password\": \"UpdatedPass123!\",\n    \"name\": \"Usuário Atualizado\",\n    \"email\": \"updateduser{{$randomInt}}@example.com\",\n    \"roles\": [\n        {\n            \"roleName\": \"ROLE_USER\"\n        }\n    ]\n}"
+						},
+						"url": "{{baseUrl}}/users/{{currentUserId}}",
+						"description": "Atualiza todos os campos de um usuário existente pelo seu ID. Requer perfil de ADMIN ou ser o próprio usuário."
+					},
+					"response": []
+				},
+				{
+					"name": "Partially Update User (Admin Only or Owner)",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"patcheduser{{$randomInt}}@example.com\"\n}"
+						},
+						"url": "{{baseUrl}}/users/{{currentUserId}}",
+						"description": "Atualiza parcialmente campos de um usuário existente pelo seu ID usando semântica PATCH. Requer perfil de ADMIN ou ser o próprio usuário."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User (Admin Only)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtToken}}"
+							}
+						],
+						"url": "{{baseUrl}}/users/{{currentUserId}}",
+						"description": "Exclui um usuário pelo seu ID. Requer perfil de ADMIN."
+					},
+					"response": []
+				}
+			],
+			"description": "APIs para gerenciamento de usuários (requer autenticação e geralmente ROLE_ADMIN)."
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080/api",
+			"type": "string"
+		},
+		{
+			"key": "admin_jwt_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "user_jwt_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "newlyRegisteredUserId",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
