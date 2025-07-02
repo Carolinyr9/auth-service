@@ -23,11 +23,11 @@ import jakarta.validation.Valid;
 @Tag(name = "Usuários", description = "API para gerenciamento de usuários")
 @Validated
 @RestController
-@RequestMapping("/api/registrer")
-public class RegistrerController {
+@RequestMapping("/api/register")
+public class RegisterController {
     private final UserService userService;
 
-    public RegistrerController(UserService userService) {
+    public RegisterController(UserService userService) {
         this.userService = userService;
     }
 
