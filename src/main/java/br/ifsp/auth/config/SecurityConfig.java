@@ -35,7 +35,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http, CustomJwtAuthenticationConverter jwtAuthConverter) throws Exception {
         http.csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**", "/api/registrer").permitAll()
+                .requestMatchers("/api/auth/**", "/api/register").permitAll()
                 .anyRequest().authenticated()
             )
             .oauth2ResourceServer(conf -> conf.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthConverter)))
