@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "8fc6d67f-fa0f-422f-9cce-89567a533c18",
 		"name": "My Movinhos - Auth Microservice",
-		"description": "Collection de APIs para o microsserviço de Autenticação do Catálogo de Filmes, com base nos controllers RegistrerController, AuthController e UserManagementController.",
+		"description": "Collection de APIs para o microsserviço de Autenticação do Catálogo de Filmes, com base nos controllers RegisterController, AuthController e UserManagementController.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
 		"_exporter_id": "39752751"
 	},
@@ -24,7 +24,7 @@
 							"mode": "raw",
 							"raw": "{\n  \"name\": \"Test User {{$randomInt}}\",\n  \"email\": \"testuser{{$randomInt}}@example.com\",\n  \"username\": \"testuser{{$randomInt}}\",\n  \"password\": \"UserPass123!\"\n}"
 						},
-						"url": "{{baseUrl}}/registrer",
+						"url": "{{baseUrl}}/register",
 						"description": "Permite que qualquer visitante se registre. O usuário receberá o papel 'ROLE_USER' por padrão."
 					},
 					"response": []
